@@ -12,6 +12,21 @@ export function deg2rad(angle: number) {
     return (angle * Math.PI) / 180;
 }
 
+export function ceil(p: vec2_t) {
+    p.x = Math.ceil(p.x);
+    p.y = Math.ceil(p.y);
+}
+
+export function floor(p: vec2_t) {
+    p.x = Math.floor(p.x);
+    p.y = Math.floor(p.y);
+}
+
+export function round(p: vec2_t) {
+    p.x = Math.round(p.x);
+    p.y = Math.round(p.y);
+}
+
 /**
  * Screen to world transformation
  * @param p The screen position

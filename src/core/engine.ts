@@ -11,6 +11,7 @@ import { LineCommand } from './commands/line';
 import { CircleCommand } from './commands/circle';
 import { ArcCommand } from './commands/arc';
 import { Exporter } from './io';
+import { Grid } from './utils/gird';
 
 export enum EngineState {
     Select = 'SELECT',
@@ -24,6 +25,20 @@ export enum Shapes {
     Arc = 'ARC',
 }
 
+export function scu(ctx: CanvasRenderingContext2D, z: number) {
+    ctx.lineWidth = 0.8 / z;
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(0, -45 / z);
+    ctx.strokeStyle = 'green';
+    ctx.stroke();
+    ctx.beginPath();
+    ctx.moveTo(0, 0);
+    ctx.lineTo(45 / z, 0);
+    ctx.strokeStyle = 'red';
+    ctx.stroke();
+}
+
 export class Engine {
     private zm: ZoomManager;
     private pm: PanManager;
@@ -32,6 +47,7 @@ export class Engine {
     private offset: vec2_t;
     private cmds: CommandStack;
     private exporter: Exporter;
+    private grid: Grid;
     constructor(private ctx: CanvasRenderingContext2D) {
         this.cvs = ctx.canvas;
         this.cvs.width = this.cvs.offsetWidth;
@@ -47,6 +63,7 @@ export class Engine {
             this.cvs.height = this.cvs.offsetHeight;
         };
         this.exporter = new Exporter();
+        this.grid = new Grid(this.offset, this.zm);
         this.render();
     }
 
@@ -69,10 +86,12 @@ export class Engine {
         this.ctx.save();
         this.ctx.scale(this.zm.value, this.zm.value); // Scale according to zoom.
         this.ctx.translate(-this.offset.x, -this.offset.y); // Translating according to the panning.
+        this.grid.render(this.ctx);
         this.ctx.lineWidth = 1 / this.zm.value; // Keep the same with of line when zooming.
         this.ctx.strokeStyle = 'white'; // This hard coded will be dynamic when layers introduced.
         this.scene.render(this.ctx); // Render the scene.
         this.cmds.render(this.ctx); // Render the current shape drawing if exist.
+        scu(this.ctx, this.zm.value);
         this.ctx.restore();
         requestAnimationFrame(this.render.bind(this));
     }
