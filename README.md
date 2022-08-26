@@ -16,3 +16,9 @@ You can use `npm` or `yarn`.
 - Draw lines and circles.
 - Export to dxf.
 - The arc not working fo now.
+
+# How to use
+- Use mouse right button to end drawing
+- Use mouse middle button for panning
+- Use mouse wheel for zooming
+- Use mouse left button for drawing. 
