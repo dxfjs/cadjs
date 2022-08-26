@@ -2,16 +2,14 @@
     background-color: var(--cadjs-container-background);
     display: flex;
     flex-direction: column;
-    align-items: stretch;
-    justify-items: stretch;
     height: 100%;
+    padding: 10px;
 }
 
 #cadjs__container .cadjs__canvas {
     background-color: var(--cadjs-canvas-background);
     cursor: crosshair;
-    margin: 0 10px 10px 10px;
-    flex: 1;
+    flex-grow: 1;
 }
 
 #cadjs__container .cadjs__pan {
@@ -24,7 +22,6 @@
     background-color: var(--cadjs-buttons-background);
     border: none;
 }
-
 #cadjs__container .cadjs__tools {
-    padding: 10px;
+    margin-bottom: 10px;
 }
