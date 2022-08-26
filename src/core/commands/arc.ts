@@ -7,7 +7,6 @@ import { Command } from './command';
 export class ArcCommand extends Command<Arc> {
     temp: Arc;
     private raduisPicked = false;
-    private startAnglePicked = false;
     private endAnglePicked = false;
     private completed = false;
 
@@ -28,7 +27,6 @@ export class ArcCommand extends Command<Arc> {
             this.temp.radius = d;
             this.raduisPicked = true;
             this.temp.startAngle = a;
-            this.startAnglePicked = true;
         } else if (!this.endAnglePicked) {
             const a = angle(this.temp.center, p);
             this.temp.endAngle = a;
