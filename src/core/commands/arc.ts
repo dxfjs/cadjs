@@ -24,10 +24,9 @@ export class ArcCommand extends Command<Arc> {
         if (!this.temp.center) this.temp.center = p;
         else if (!this.raduisPicked) {
             const d = distance(this.temp.center, p);
+            const a = angle(this.temp.center, p);
             this.temp.radius = d;
             this.raduisPicked = true;
-        } else if (!this.startAnglePicked) {
-            const a = angle(this.temp.center, p);
             this.temp.startAngle = a;
             this.startAnglePicked = true;
         } else if (!this.endAnglePicked) {
@@ -44,10 +43,9 @@ export class ArcCommand extends Command<Arc> {
         if (!this.temp.center) return;
         if (!this.raduisPicked) {
             const d = distance(this.temp.center, p);
-            this.temp.radius = d;
-        } else if (!this.startAnglePicked) {
             const a = angle(this.temp.center, p);
-            this.temp.startAngle = 2 * Math.PI - a;
+            this.temp.radius = d;
+            this.temp.startAngle = a;
         } else if (!this.endAnglePicked) {
             const a = angle(this.temp.center, p);
             this.temp.endAngle = a;

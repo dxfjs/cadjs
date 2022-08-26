@@ -50,14 +50,12 @@ export function distance(f: vec2_t, s: vec2_t) {
 }
 
 export function angle(f: vec2_t, s: vec2_t) {
-    const dx = f.x - s.x;
-    const dy = f.y - s.y;
-    let a = Math.abs(Math.atan(dx / dy));
+    const dx = s.x - f.x;
+    const dy = s.y - f.y;
+    let a = Math.atan(dy / dx);
     let r = a;
-    if (dx < 0 && dy > 0) r += 2 * Math.PI - a;
-    else if (dx < 0 && dy < 0) r += Math.PI + a;
-    else if (dx > 0 && dy < 0) r += Math.PI - a;
-    console.log(rad2deg(r));
-
+    if (dx < 0 && dy > 0) r = Math.PI + a;
+    else if (dx < 0 && dy < 0) r = Math.PI + a;
+    else if (dx > 0 && dy < 0) r = 2 * Math.PI + a;
     return r;
 }

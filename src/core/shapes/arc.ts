@@ -10,7 +10,7 @@ export class Arc extends Shape {
     constructor() {
         super();
         this.startAngle = 0;
-        this.endAngle = 0;
+        this.endAngle = 2 * Math.PI;
     }
     render(ctx: CanvasRenderingContext2D): void {
         if (!(this.center && this.radius != null)) return;
