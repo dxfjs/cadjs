@@ -13,9 +13,8 @@ pnpm dev
 ```
 You can use `npm` or `yarn`.
 # Features
-- Draw lines and circles.
+- Draw lines, circles and arcs.
 - Export to dxf.
-- The arc not working fo now.
 
 # How to use
 - Use mouse right button to end drawing
