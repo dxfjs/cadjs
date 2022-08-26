@@ -1,0 +1,28 @@
+#cadjs__container {
+    background-color: var(--cadjs-container-background);
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+}
+
+#cadjs__container .cadjs__canvas {
+    background-color: var(--cadjs-canvas-background);
+    cursor: crosshair;
+    height: 100%;
+    margin: 0 5px 5px 5px;
+}
+
+#cadjs__container .cadjs__pan {
+    cursor: grabbing;
+    cursor: -webkit-grabbing;
+}
+
+#cadjs__container button {
+    padding: 10px;
+    background-color: var(--cadjs-buttons-background);
+    border: none;
+}
+
+#cadjs__container .cadjs__tools {
+    padding: 5px;
+}
