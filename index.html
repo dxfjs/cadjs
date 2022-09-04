@@ -5,19 +5,9 @@
         <meta name="viewport" content="width=device-width, initial-scale=1.0" />
         <title>CadJS</title>
     </head>
+
     <body>
-        <div id="cadjs__container">
-            <div class="cadjs__tools">
-                <div class="cadjs__draw__tools">
-                    <button id="cadjs__draw__line" class="cadjs__tools__button">Line</button>
-                    <button id="cadjs__draw__circle" class="cadjs__tools__button">Circle</button>
-                    <button id="cadjs__draw__arc" class="cadjs__tools__button">Arc</button>
-                    <button id="cadjs__draw__undo" class="cadjs__tools__button">Undo</button>
-                    <button id="cadjs__export__dxf" class="cadjs__tools__button">dxf</button>
-                </div>
-            </div>
-            <canvas id="cadjs__canvas" class="cadjs__canvas" tabindex="1"></canvas>
-        </div>
-        <script type="module" src="/src/index.ts"></script>
+        <div id="cadjs__app"></div>
+        <script type="module" src="/src/main.ts"></script>
     </body>
 </html>
