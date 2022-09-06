@@ -49,12 +49,14 @@ export class CommandsManager {
 
     stop(): void {
         if (!this.currentCommand) return;
-        if (this.currentCommand.valid()) {
+        if (
+            !(this.currentCommand instanceof SelectCommand) &&
+            this.currentCommand.valid()
+        ) {
             this.commands.push(this.currentCommand);
             this.currentCommand.store();
         }
-        if (!this.lastCommandName) this.currentCommand = null;
-        else if (this.lastCommandName === CommandNames.Select) return;
+        if (!this.lastCommandName) this.start(CommandNames.Select);
         else this.start(this.lastCommandName);
     }
 
@@ -76,11 +78,16 @@ export class CommandsManager {
 
     cancel(): void {
         this.lastCommandName = null;
-        this.currentCommand = new SelectCommand(this);
+        this.start(CommandNames.Select);
     }
 
-    render(ctx: CanvasRenderingContext2D): void {
+    deselectAll(): void {
+        this.scene.selectedShapes.forEach((shape) => shape.selected = false)
+        this.scene.selectedShapes = [];
+    }
+
+    render(context: CanvasRenderingContext2D): void {
         if (!this.currentCommand) return;
-        this.currentCommand.render(ctx);
+        this.currentCommand.render(context);
     }
 }

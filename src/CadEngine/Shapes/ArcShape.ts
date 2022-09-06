@@ -2,7 +2,7 @@ import { Shape } from '../Interfaces/Shape';
 import { ZoomManager } from '../ZoomManager';
 import { Point, Line, Circle, Arc, intersections } from '@mathigon/euclid';
 
-export class ArcShape implements Shape {
+export class ArcShape implements Shape<Arc> {
     center: Point;
     radius: number;
     startAngle: number;
@@ -29,10 +29,12 @@ export class ArcShape implements Shape {
         return this.endAngle - this.startAngle;
     }
 
+    get geometry() {
+        return new Arc(this.center, this.start, this.angle);
+    }
+
     intersects(geometry: Line | Circle | Arc) {
-        const is = intersections(new Arc(this.center, this.start, this.angle), geometry);
-        console.log(is);
-        return is;
+        return intersections(this.geometry, geometry);
     }
 
     render(context: CanvasRenderingContext2D): void {

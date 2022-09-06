@@ -40,7 +40,7 @@ export class CadEngine {
             zoomManager: this.zoomManager,
             panManager: this.panManger,
         });
-        this.keyboardController = new KeyboardController();
+        this.keyboardController = new KeyboardController(this.commandsManager);
         window.onresize = () => {
             this.canvas.width = this.canvas.offsetWidth;
             this.canvas.height = this.canvas.offsetHeight;

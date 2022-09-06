@@ -1,13 +1,14 @@
 import { Shape } from '../Interfaces/Shape';
 import { ZoomManager } from '../ZoomManager';
-import { Arc, Circle, intersections, Line, Point } from '@mathigon/euclid';
+import { Arc, Circle, intersections, Line, Point, Rectangle } from '@mathigon/euclid';
 
-export class RectangleShape implements Shape {
+export class RectangleShape implements Shape<Rectangle> {
     topleft: Point;
     width: number;
     height: number;
     selected: boolean;
     zoomManager: ZoomManager;
+
     constructor(topleft: Point, zoomManager: ZoomManager) {
         this.topleft = topleft;
         this.width = 0;
@@ -16,29 +17,58 @@ export class RectangleShape implements Shape {
         this.zoomManager = zoomManager;
     }
 
-    intersects(geometry: Line | Circle | Arc) {
-        const pts: Point[] = [];
-        const top: Line = new Line(
+    get top(): Line {
+        return new Line(
             this.topleft,
             new Point(this.topleft.x + this.width, this.topleft.y)
         );
-        const right: Line = new Line(
+    }
+
+    get right(): Line {
+        return new Line(
             new Point(this.topleft.x + this.width, this.topleft.y),
-            new Point(this.topleft.x + this.width, this.topleft.y - this.height)
+            new Point(this.topleft.x + this.width, this.topleft.y + this.height)
         );
-        const bottom: Line = new Line(
-            new Point(this.topleft.x + this.width, this.topleft.y - this.height),
-            new Point(this.topleft.x, this.topleft.y - this.height)
+    }
+
+    get bottom(): Line {
+        return new Line(
+            new Point(this.topleft.x + this.width, this.topleft.y + this.height),
+            new Point(this.topleft.x, this.topleft.y + this.height)
         );
-        const left: Line = new Line(
-            new Point(this.topleft.x, this.topleft.y - this.height),
+    }
+
+    get left(): Line {
+        return new Line(
+            new Point(this.topleft.x, this.topleft.y + this.height),
             this.topleft
         );
-        pts.push(...intersections(top, geometry));
-        pts.push(...intersections(right, geometry));
-        pts.push(...intersections(bottom, geometry));
-        pts.push(...intersections(left, geometry));
+    }
+
+    get geometry(): Rectangle {
+        return new Rectangle(this.topleft, this.width, this.height);
+    }
+
+    intersects(geometry: Line | Circle | Arc | Rectangle) {
+        const pts: Point[] = [];
+        pts.push(...this._inter(this.top, geometry));
+        pts.push(...this._inter(this.bottom, geometry));
+        pts.push(...this._inter(this.left, geometry));
+        pts.push(...this._inter(this.right, geometry));
         return pts;
+    }
+
+    private _inter(l: Line, g: Line | Circle | Arc | Rectangle) {
+        const pts = intersections(l, g);
+        const result: Point[] = [];
+        pts.forEach((p) => {
+            if (
+                Point.distance(p, l.p1) + Point.distance(p, l.p2) ===
+                Point.distance(l.p1, l.p2)
+            )
+                result.push(p);
+        });        
+        return result;
     }
 
     render(ctx: CanvasRenderingContext2D): void {
