@@ -2,43 +2,60 @@ import { Command } from '../Interfaces/Command';
 import { CommandsManager } from './CommandsManager';
 import { Shape } from '../Interfaces/Shape';
 import { RectangleShape } from '../Shapes/RectangleShape';
-import { Arc, Circle, Line, Point, Rectangle } from '@mathigon/euclid';
+import { PointGeometry } from '../Geometry/PointGeometry';
+import { ArcShape } from '../Shapes/ArcShape';
+import { CircleShape } from '../Shapes/CircleShape';
+import { SegmentShape } from '../Shapes/SegmentShape';
 
 export class SelectCommand implements Command {
     rectangle: RectangleShape | null;
     commandsManager: CommandsManager;
     topleftPicked: boolean;
-
+    private _dx: number;
     constructor(commandsManager: CommandsManager) {
         this.commandsManager = commandsManager;
         this.rectangle = null;
         this.topleftPicked = false;
+        this._dx = 0;
     }
 
-    private get _dx(): number {
-        if (!this.rectangle) return 0;
-        return this.rectangle.topleft.x + this.rectangle.width - this.rectangle.topleft.x;
+    private _storedx(): void {
+        if (this.rectangle)
+            this._dx =
+                this.rectangle.topleft.x +
+                this.rectangle.width -
+                this.rectangle.topleft.x;
+        else this._dx = 0;
+    }
+
+    private _isShape(
+        shape: Shape
+    ): shape is RectangleShape | ArcShape | CircleShape | SegmentShape {
+        return (
+            shape instanceof RectangleShape ||
+            shape instanceof ArcShape ||
+            shape instanceof CircleShape ||
+            shape instanceof SegmentShape
+        );
     }
 
     private _select() {
-        this.commandsManager.scene.selectedShapes = [];
-        const shapes = this.commandsManager.scene.shapes;
-        const selectedShapes: Shape<Line | Arc | Rectangle | Circle>[] = [];
-        if (this.rectangle) {
-            if (this._dx < 0) {
-                for (const shape of shapes) {
-                    const pts = this.rectangle.intersects(shape.geometry);
-                    if (pts.length > 0) {
-                        selectedShapes.push(shape);
-                        shape.selected = true;
-                    }
-                }
-                this.commandsManager.scene.selectedShapes = selectedShapes;
+        const rect = this.rectangle;
+        if (!rect) return;
+        this.commandsManager.scene.shapes.forEach((shape) => {
+            if (shape.selected) return;
+            else if (this._isShape(shape)) {
+                let select = false;
+                const intersects = rect.intersects(shape).length > 0;
+                const contained = rect.bbox.containsBBox(shape.bbox);
+                if (this._dx < 0) select = intersects || contained;
+                else select = contained;
+                if (select) this.commandsManager.scene.select(shape);
             }
-        }
+        });
     }
 
-    pick(mousePosition: Point): void {
+    pick(mousePosition: PointGeometry): void {
         if (!this.topleftPicked) {
             this.rectangle = new RectangleShape(
                 mousePosition,
@@ -48,15 +65,18 @@ export class SelectCommand implements Command {
         } else if (this.rectangle) {
             this.rectangle.width = mousePosition.x - this.rectangle.topleft.x;
             this.rectangle.height = mousePosition.y - this.rectangle.topleft.y;
+            this._storedx();
+            this.rectangle.adjust();
             this._select();
             this.commandsManager.stop();
         }
     }
 
-    move(mousePosition: Point): void {
+    move(mousePosition: PointGeometry): void {
         if (!this.rectangle) return;
         this.rectangle.width = mousePosition.x - this.rectangle.topleft.x;
         this.rectangle.height = mousePosition.y - this.rectangle.topleft.y;
+        this._storedx();
     }
 
     valid(): boolean {

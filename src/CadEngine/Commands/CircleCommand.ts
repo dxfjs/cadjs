@@ -1,7 +1,8 @@
 import { Command } from '../Interfaces/Command';
 import { CircleShape } from '../Shapes/CircleShape';
 import { CommandsManager } from './CommandsManager';
-import { Point } from '@mathigon/euclid';
+import { PointGeometry } from '../Geometry/PointGeometry';
+import { distance } from '../Geometry/GeometryUtils';
 
 export class CircleCommand implements Command {
     circle: CircleShape | null;
@@ -15,7 +16,7 @@ export class CircleCommand implements Command {
         this.radiusPicked = false;
     }
 
-    pick(mousePosition: Point): void {
+    pick(mousePosition: PointGeometry): void {
         if (!this.centerPicked) {
             this.circle = new CircleShape(
                 mousePosition,
@@ -23,15 +24,16 @@ export class CircleCommand implements Command {
             );
             this.centerPicked = true;
         } else if (this.circle) {
-            this.circle.radius = Point.distance(this.circle.center, mousePosition);
+            this.circle.radius = distance(this.circle.center, mousePosition);
             this.radiusPicked = true;
+            this.circle.updateNodes();
             this.commandsManager.stop();
         }
     }
 
-    move(mousePosition: Point): void {
+    move(mousePosition: PointGeometry): void {
         if (!this.circle) return;
-        this.circle.radius = Point.distance(this.circle.center, mousePosition);
+        this.circle.radius = distance(this.circle.center, mousePosition);
     }
 
     valid(): boolean {

@@ -1,37 +1,35 @@
 import { Shape } from '../Interfaces/Shape';
 import { ZoomManager } from '../ZoomManager';
-import { Line, Point } from '@mathigon/euclid';
+import { SegmentGeometry } from '../Geometry/SegmentGeometry';
+import { PointGeometry } from '../Geometry/PointGeometry';
+import { NodesManager } from '../NodesManager';
+import { render } from './ShapesUtils';
 
-export class SegmentShape implements Shape<Line> {
-    start: Point;
-    end: Point;
+export class SegmentShape extends SegmentGeometry implements Shape {
     selected: boolean;
     zoomManager: ZoomManager;
+    nodesManager: NodesManager;
 
-    constructor(start: Point, zoomManager: ZoomManager) {
-        this.start = start;
-        this.end = start;
+    constructor(start: PointGeometry, zoomManager: ZoomManager) {
+        super(start, start);
         this.selected = false;
         this.zoomManager = zoomManager;
+        this.nodesManager = new NodesManager(zoomManager);
     }
 
-    get geometry(): Line {
-        return new Line(this.start, this.end);
+    updateNodes(): void {
+        this.nodesManager.clear();
+        this.nodesManager.add(this.start);
+        this.nodesManager.add(this.end);
     }
 
-    render(ctx: CanvasRenderingContext2D): void {
-        const strokeStyle = ctx.strokeStyle;
-        const dash = ctx.getLineDash();
-        const dashLength = 5 / this.zoomManager.value;
-        if (this.selected) {
-            ctx.strokeStyle = 'red';
-            ctx.setLineDash([dashLength, dashLength]);
-        }
-        ctx.beginPath();
-        ctx.moveTo(this.start.x, this.start.y);
-        ctx.lineTo(this.end.x, this.end.y);
-        ctx.stroke();
-        ctx.strokeStyle = strokeStyle;
-        ctx.setLineDash(dash);
+    render(context: CanvasRenderingContext2D): void {
+        render(context, this.zoomManager.value, this.selected, (context) => {
+            context.beginPath();
+            context.moveTo(this.start.x, this.start.y);
+            context.lineTo(this.end.x, this.end.y);
+            context.stroke();
+        });
+        if (this.selected) this.nodesManager.render(context);
     }
 }

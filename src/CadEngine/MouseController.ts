@@ -2,7 +2,7 @@ import { CommandsManager } from './Commands/CommandsManager';
 import { Transform } from './Transform';
 import { PanManager } from './PanManager';
 import { ZoomManager } from './ZoomManager';
-import { Point } from '@mathigon/euclid';
+import { point } from './Geometry/GeometryUtils';
 
 export class MouseController {
     canvas: HTMLCanvasElement;
@@ -38,7 +38,7 @@ export class MouseController {
 
     onMouseDown(event: MouseEvent) {
         event.preventDefault();
-        const pos = new Point(event.offsetX, event.offsetY);
+        const pos = point(event.offsetX, event.offsetY);
         if (event.buttons === 1) this.commandsManager.pick(pos);
         if (event.buttons === 2) this.commandsManager.stop();
         if (event.buttons === 4) this.panManager.start(pos);
@@ -46,7 +46,7 @@ export class MouseController {
 
     onMouseMove(event: MouseEvent) {
         event.preventDefault();
-        const pos = new Point(event.offsetX, event.offsetY);
+        const pos = point(event.offsetX, event.offsetY);
         this.commandsManager.move(pos);
         if (event.buttons === 4) this.panManager.update(pos);
     }
@@ -58,7 +58,7 @@ export class MouseController {
 
     onMouseWheel(event: WheelEvent) {
         event.preventDefault();
-        const pos = new Point(event.offsetX, event.offsetY);
+        const pos = point(event.offsetX, event.offsetY);
         if (event.deltaY > 0) this.zoomManager.zoomOut(pos);
         else this.zoomManager.zoomIn(pos);
     }

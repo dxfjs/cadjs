@@ -1,11 +1,11 @@
 import { CommandsManager } from '../Commands/CommandsManager';
 import { Renderable } from './Renderable';
-import { Point } from '@mathigon/euclid';
+import { PointGeometry } from '../Geometry/PointGeometry';
 
 export interface Command extends Renderable {
     commandsManager: CommandsManager;
-    pick(mousePosition: Point): void;
-    move(mousePosition: Point): void;
+    pick(mousePosition: PointGeometry): void;
+    move(mousePosition: PointGeometry): void;
     valid(): boolean;
     store(): void;
     undo(): void;

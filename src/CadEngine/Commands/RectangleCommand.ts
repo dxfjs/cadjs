@@ -1,7 +1,7 @@
 import { Command } from '../Interfaces/Command';
 import { CommandsManager } from './CommandsManager';
 import { RectangleShape } from '../Shapes/RectangleShape';
-import { Point } from '@mathigon/euclid';
+import { PointGeometry } from '../Geometry/PointGeometry';
 
 export class RectangleCommand implements Command {
     rectangle: RectangleShape | null;
@@ -15,7 +15,7 @@ export class RectangleCommand implements Command {
         this.bottomrightPicked = false;
     }
 
-    pick(mousePosition: Point): void {
+    pick(mousePosition: PointGeometry): void {
         if (!this.topleftPicked) {
             this.rectangle = new RectangleShape(
                 mousePosition,
@@ -25,12 +25,14 @@ export class RectangleCommand implements Command {
         } else if (this.rectangle) {
             this.rectangle.width = mousePosition.x - this.rectangle.topleft.x;
             this.rectangle.height = mousePosition.y - this.rectangle.topleft.y;
+            this.rectangle.adjust();
+            this.rectangle.updateNodes();
             this.bottomrightPicked = true;
             this.commandsManager.stop();
         }
     }
 
-    move(mousePosition: Point): void {
+    move(mousePosition: PointGeometry): void {
         if (!this.rectangle) return;
         this.rectangle.width = mousePosition.x - this.rectangle.topleft.x;
         this.rectangle.height = mousePosition.y - this.rectangle.topleft.y;

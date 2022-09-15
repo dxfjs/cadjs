@@ -2,6 +2,7 @@ import { Command } from '../Interfaces/Command';
 import { ArcShape } from '../Shapes/ArcShape';
 import { CommandsManager } from './CommandsManager';
 import { Point } from '@mathigon/euclid';
+import { PointGeometry } from '../Geometry/PointGeometry';
 
 export class ArcCommand implements Command {
     commandsManager: CommandsManager;
@@ -19,31 +20,35 @@ export class ArcCommand implements Command {
         this.endAnglePicked = false;
     }
 
-    pick(mousePosition: Point): void {
-        if (!this.centerPicked) {
-            this.arc = new ArcShape(mousePosition, this.commandsManager.zoomManager);
+    pick(mousePosition: PointGeometry): void {
+        if (!this.centerPicked || !this.arc) {
+            this.arc = new ArcShape(
+                mousePosition,
+                this.commandsManager.zoomManager
+            );
             this.centerPicked = true;
-        } else if (!this.radiusPicked && this.arc) {
+        } else if (!this.radiusPicked) {
             this.arc.radius = Point.distance(this.arc.center, mousePosition);
             this.radiusPicked = true;
-        } else if (!this.startAnglePicked && this.arc) {
-            this.arc.startAngle = mousePosition.angle(this.arc.center);
+        } else if (!this.startAnglePicked) {
+            this.arc.startAngle = this.arc.center.angle(mousePosition);
             this.startAnglePicked = true;
-        } else if (!this.endAnglePicked && this.arc) {
-            this.arc.endAngle = mousePosition.angle(this.arc.center);
+        } else if (!this.endAnglePicked) {
+            this.arc.endAngle = this.arc.center.angle(mousePosition);
             this.endAnglePicked = true;
+            this.arc.updateNodes();
             this.commandsManager.stop();
         }
     }
 
-    move(mousePosition: Point): void {
+    move(mousePosition: PointGeometry): void {
         if (!this.centerPicked || !this.arc) return;
         if (!this.radiusPicked) {
             this.arc.radius = Point.distance(this.arc.center, mousePosition);
         } else if (!this.startAnglePicked) {
-            this.arc.startAngle = mousePosition.angle(this.arc.center);
+            this.arc.startAngle = this.arc.center.angle(mousePosition);
         } else if (!this.endAnglePicked) {
-            this.arc.endAngle = mousePosition.angle(this.arc.center);
+            this.arc.endAngle = this.arc.center.angle(mousePosition);
         }
     }
 

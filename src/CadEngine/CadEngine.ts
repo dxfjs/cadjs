@@ -58,9 +58,12 @@ export class CadEngine {
         this.context.clearRect(0, 0, this.canvas.width, this.canvas.height); // Clear the context
         this.context.save();
         this.context.scale(this.zoomManager.value, this.zoomManager.value); // Scale according to zoom.
-        this.context.translate(-this.transform.offsetX, -this.transform.offsetY); // Translating according to the panning.
-        this.gridManager.render(this.context);
-        this.context.lineWidth = 1 / this.zoomManager.value; // Keep the same with of line when zooming.
+        this.context.translate(
+            -this.transform.offsetX,
+            -this.transform.offsetY
+        ); // Translating according to the panning.
+        // this.gridManager.render(this.context);
+        this.context.lineWidth = 1.5 / this.zoomManager.value; // Keep the same with of line when zooming.
         this.context.strokeStyle = 'white'; // This hard coded will be dynamic when layers introduced.
         this.scene.render(this.context); // Render the scene.
         this.commandsManager.render(this.context);

@@ -1,7 +1,7 @@
 import { Command } from '../Interfaces/Command';
 import { SegmentShape } from '../Shapes/SegmentShape';
 import { CommandsManager } from './CommandsManager';
-import { Point } from '@mathigon/euclid';
+import { PointGeometry } from '../Geometry/PointGeometry';
 
 export class SegmentCommand implements Command {
     temporarySegment: SegmentShape | null;
@@ -15,15 +15,22 @@ export class SegmentCommand implements Command {
         this.commandsManager = comandsManager;
     }
 
-    pick(mousePosition: Point): void {
+    pick(mousePosition: PointGeometry): void {
         const zoomManager = this.commandsManager.zoomManager;
         if (!this.startPicked) {
-            this.temporarySegment = new SegmentShape(mousePosition, zoomManager);
+            this.temporarySegment = new SegmentShape(
+                mousePosition,
+                zoomManager
+            );
             this.startPicked = true;
         } else if (this.temporarySegment) {
             this.temporarySegment.end = mousePosition;
+            this.temporarySegment.updateNodes();
             this.segments.push(this.temporarySegment);
-            this.temporarySegment = new SegmentShape(mousePosition, zoomManager);
+            this.temporarySegment = new SegmentShape(
+                mousePosition,
+                zoomManager
+            );
         }
     }
 
@@ -32,7 +39,7 @@ export class SegmentCommand implements Command {
         this.temporarySegment = null;
     }
 
-    move(mousePosition: Point): void {
+    move(mousePosition: PointGeometry): void {
         if (this.temporarySegment) this.temporarySegment.end = mousePosition;
     }
 

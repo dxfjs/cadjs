@@ -1,8 +1,7 @@
 import { ZoomManager } from '../ZoomManager';
+import { Renderable } from './Renderable';
 
-export interface Shape<T> {
+export interface Shape extends Renderable {
     selected: boolean;
     zoomManager: ZoomManager;
-    get geometry(): T;
-    render(ctx: CanvasRenderingContext2D): void;
 }

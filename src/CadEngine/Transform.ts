@@ -1,4 +1,5 @@
-import { Point } from '@mathigon/euclid';
+import { PointGeometry } from './Geometry/PointGeometry';
+import { point } from './Geometry/GeometryUtils';
 
 export class Transform {
     offsetX: number;
@@ -9,15 +10,15 @@ export class Transform {
         this.offsetY = 0;
     }
 
-    worldToScreen(position: Point, zoom: number): Point {
-        return new Point(
+    worldToScreen(position: PointGeometry, zoom: number): PointGeometry {
+        return point(
             (position.x - this.offsetX) * zoom,
             (position.y - this.offsetY) * zoom
         );
     }
 
-    screenToWorld(position: Point, zoom: number): Point {
-        return new Point(
+    screenToWorld(position: PointGeometry, zoom: number): PointGeometry {
+        return point(
             position.x / zoom + this.offsetX,
             position.y / zoom + this.offsetY
         );

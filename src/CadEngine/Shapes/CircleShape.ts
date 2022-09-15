@@ -1,39 +1,37 @@
 import { Shape } from '../Interfaces/Shape';
 import { ZoomManager } from '../ZoomManager';
-import { Arc, Circle, intersections, Line, Point } from '@mathigon/euclid';
+import { CircleGeometry } from '../Geometry/CircleGeometry';
+import { PointGeometry } from '../Geometry/PointGeometry';
+import { NodesManager } from '../NodesManager';
+import { render } from './ShapesUtils';
 
-export class CircleShape implements Shape<Circle> {
-    center: Point;
-    radius: number;
+export class CircleShape extends CircleGeometry implements Shape {
     selected: boolean;
     zoomManager: ZoomManager;
-    constructor(center: Point, zoomManager: ZoomManager) {
-        this.center = center;
-        this.radius = 0;
+    nodesManager: NodesManager;
+
+    constructor(center: PointGeometry, zoomManager: ZoomManager) {
+        super(center, 0);
         this.selected = false;
         this.zoomManager = zoomManager;
+        this.nodesManager = new NodesManager(zoomManager);
     }
 
-    get geometry(): Circle {
-        return new Circle(this.center, this.radius);
+    updateNodes(): void {
+        this.nodesManager.clear();
+        this.nodesManager.add(this.center);
+        this.nodesManager.add(this.top);
+        this.nodesManager.add(this.right);
+        this.nodesManager.add(this.bottom);
+        this.nodesManager.add(this.left);
     }
 
-    intersects(geometry: Line | Arc | Circle) {
-        return intersections(new Circle(this.center, this.radius), geometry);
-    }
-
-    render(ctx: CanvasRenderingContext2D): void {
-        const strokeStyle = ctx.strokeStyle;
-        const dash = ctx.getLineDash();
-        const dashLength = 5 / this.zoomManager.value;
-        if (this.selected) {
-            ctx.strokeStyle = 'red';
-            ctx.setLineDash([dashLength, dashLength]);
-        }
-        ctx.beginPath();
-        ctx.arc(this.center.x, this.center.y, this.radius, 0, 2 * Math.PI);
-        ctx.stroke();
-        ctx.strokeStyle = strokeStyle;
-        ctx.setLineDash(dash);
+    render(context: CanvasRenderingContext2D): void {
+        render(context, this.zoomManager.value, this.selected, (context) => {
+            context.beginPath();
+            context.arc(this.cx, this.cy, this.r, 0, 2 * Math.PI);
+            context.stroke();
+        });
+        if (this.selected) this.nodesManager.render(context);
     }
 }

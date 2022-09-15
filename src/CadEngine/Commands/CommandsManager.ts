@@ -7,7 +7,7 @@ import { CircleCommand } from './CircleCommand';
 import { RectangleCommand } from './RectangleCommand';
 import { SegmentCommand } from './SegmentCommand';
 import { SelectCommand } from './SelectCommand';
-import { Point } from '@mathigon/euclid';
+import { PointGeometry } from '../Geometry/PointGeometry';
 
 export enum CommandNames {
     'Segment' = 'Segment',
@@ -25,6 +25,7 @@ export class CommandsManager {
     readonly scene: Scene;
     readonly transform: Transform;
     readonly zoomManager: ZoomManager;
+
     constructor(scene: Scene, transform: Transform, zomManager: ZoomManager) {
         this.currentCommand = new SelectCommand(this);
         this.lastCommandName = null;
@@ -39,7 +40,8 @@ export class CommandsManager {
             this.currentCommand = new SegmentCommand(this);
         else if (command === CommandNames.Circle)
             this.currentCommand = new CircleCommand(this);
-        else if (command === CommandNames.Arc) this.currentCommand = new ArcCommand(this);
+        else if (command === CommandNames.Arc)
+            this.currentCommand = new ArcCommand(this);
         else if (command === CommandNames.Rectangle)
             this.currentCommand = new RectangleCommand(this);
         else if (command === CommandNames.Select)
@@ -60,14 +62,18 @@ export class CommandsManager {
         else this.start(this.lastCommandName);
     }
 
-    pick(p: Point): void {
+    pick(p: PointGeometry): void {
         if (!this.currentCommand) return;
-        this.currentCommand.pick(this.transform.screenToWorld(p, this.zoomManager.value));
+        this.currentCommand.pick(
+            this.transform.screenToWorld(p, this.zoomManager.value)
+        );
     }
 
-    move(p: Point): void {
+    move(p: PointGeometry): void {
         if (!this.currentCommand) return;
-        this.currentCommand.move(this.transform.screenToWorld(p, this.zoomManager.value));
+        this.currentCommand.move(
+            this.transform.screenToWorld(p, this.zoomManager.value)
+        );
     }
 
     undo(): void {
@@ -82,8 +88,7 @@ export class CommandsManager {
     }
 
     deselectAll(): void {
-        this.scene.selectedShapes.forEach((shape) => shape.selected = false)
-        this.scene.selectedShapes = [];
+        this.scene.deselectAll();
     }
 
     render(context: CanvasRenderingContext2D): void {

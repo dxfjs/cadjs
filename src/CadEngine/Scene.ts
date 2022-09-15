@@ -1,4 +1,3 @@
-import { Arc, Circle, Line, Rectangle } from '@mathigon/euclid';
 import { Renderable } from './Interfaces/Renderable';
 import { Shape } from './Interfaces/Shape';
 
@@ -8,17 +7,37 @@ export enum SelectionType {
 }
 
 export class Scene implements Renderable {
-    readonly shapes: Shape<Line | Arc | Rectangle | Circle>[];
-    selectedShapes: Shape<Line | Arc | Rectangle | Circle>[] = [];
+    readonly shapes: Shape[];
+    selectedShapes: Shape[];
+
     constructor() {
         this.shapes = [];
+        this.selectedShapes = [];
     }
 
-    addShape(shape: Shape<Line | Arc | Rectangle | Circle>) {
+    select(shape: Shape) {
+        this.selectedShapes.push(shape);
+        shape.selected = true;
+    }
+
+    deselect(shape: Shape) {
+        const index = this.selectedShapes.indexOf(shape);
+        if (index > -1) {
+            this.selectedShapes.splice(index, 1);
+            shape.selected = false;
+        }
+    }
+
+    deselectAll() {
+        this.selectedShapes.forEach((shape) => (shape.selected = false));
+        this.selectedShapes = [];
+    }
+
+    addShape(shape: Shape) {
         this.shapes.push(shape);
     }
 
-    removeShape(shape: Shape<Line | Arc | Rectangle | Circle>) {
+    removeShape(shape: Shape) {
         const index = this.shapes.indexOf(shape);
         if (index !== -1) {
             this.shapes.splice(index, 1);
