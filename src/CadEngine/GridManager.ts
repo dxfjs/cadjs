@@ -1,9 +1,14 @@
 import { Renderable } from './Interfaces/Renderable';
 import { ZoomManager } from './ZoomManager';
-import { Point } from '@mathigon/euclid';
+import { point } from './Geometry/GeometryUtils';
 
 export class GridManager implements Renderable {
     value = 100; // TODO Need a dynamic way to update according to zoom.
+
+    get transform() {
+        return this.zoomManager.transform;
+    }
+
     constructor(private zoomManager: ZoomManager) {}
 
     update() {}
@@ -12,12 +17,12 @@ export class GridManager implements Renderable {
         const cw = ctx.canvas.width;
         const ch = ctx.canvas.height;
 
-        const topleft = this.zoomManager.transform.screenToWorld(
-            new Point(0, 0),
+        const topleft = this.transform.screenToWorld(
+            point(0, 0),
             this.zoomManager.value
         );
-        const bottomright = this.zoomManager.transform.screenToWorld(
-            new Point(cw, ch),
+        const bottomright = this.transform.screenToWorld(
+            point(cw, ch),
             this.zoomManager.value
         );
         const nx = Math.ceil((bottomright.x - topleft.x) / this.value);
